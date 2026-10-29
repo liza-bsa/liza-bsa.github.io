@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MonSite</title>
+<style>
+  :root{--bg:#0f0f14;--card:#1a1a24;--line:#2a2a38;--ink:#f2f2f7;--mute:#9a9ab0;--accent:#ff2e63}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+  a{color:inherit;text-decoration:none}
+  header{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(15,15,20,.95);border-bottom:1px solid var(--line)}
+  .avatar{width:42px;height:42px;border-radius:50%;border:2px solid var(--accent);background:var(--card) center/cover no-repeat;cursor:pointer;flex:none;padding:0}
+  .search{flex:1;max-width:520px;margin:0 auto}
+  .search input{width:100%;padding:10px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:1rem}
+  .burger{width:42px;height:42px;flex:none;background:none;border:0;cursor:pointer;display:grid;place-content:center;gap:5px}
+  .burger i{display:block;width:22px;height:3px;border-radius:2px;background:var(--ink)}
+  .pop{position:absolute;top:60px;left:10px;width:min(300px,calc(100vw - 20px));background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;display:none;flex-direction:column;gap:8px;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+  .pop.open{display:flex}
+  .social{display:block;padding:14px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+  .social b{display:block}.social span{color:var(--mute);font-size:.85rem}
+  .menu{position:fixed;inset:0 0 0 auto;width:min(300px,85vw);background:var(--card);border-left:1px solid var(--line);transform:translateX(100%);transition:transform .2s;z-index:30;padding:16px;display:flex;flex-direction:column;gap:4px}
+  .menu.open{transform:none}
+  .menu a,.menu button{display:block;width:100%;text-align:left;background:none;border:0;color:var(--ink);padding:12px 8px;font-size:1rem;border-radius:8px;cursor:pointer}
+  .menu a:hover,.menu button:hover{background:var(--bg)}
+  .menu h3{margin:0 0 8px;font-size:.9rem;color:var(--mute);font-weight:600}
+  .veil{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:25;display:none}
+  .veil.open{display:block}
+  main{max-width:640px;margin:0 auto;padding:12px;display:flex;flex-direction:column;gap:14px}
+  .item{display:block;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .thumb{aspect-ratio:16/9;background:linear-gradient(135deg,#2a1b3d,#1b2a3d);display:grid;place-content:center;color:var(--mute);font-size:.9rem}
+  .item div.t{padding:12px}
+  .item h2{margin:0 0 4px;font-size:1.05rem}
+  .item p{margin:0;color:var(--mute);font-size:.9rem}
+  .slot{text-align:center;padding:6px 0}
+  .slot small{display:block;color:var(--mute);font-size:.7rem;margin-bottom:4px}
+  .ph{border:2px dashed var(--line);padding:22px;color:var(--mute);font-size:.85rem;border-radius:10px}
+  .empty{display:none;text-align:center;color:var(--mute);padding:30px}
+  footer{max-width:640px;margin:0 auto;padding:20px 12px 80px;color:var(--mute);font-size:.8rem;text-align:center}
+  dialog{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:12px;max-width:560px;width:calc(100vw - 24px);padding:20px;max-height:80vh;overflow:auto}
+  dialog::backdrop{background:rgba(0,0,0,.6)}
+  dialog h2{margin-top:0}dialog p{line-height:1.5;color:#d8d8e6}
+  dialog button{margin-top:10px;padding:10px 16px;border-radius:8px;border:0;background:var(--accent);color:#fff;font-size:1rem;cursor:pointer}
+  .consent{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--card);border-top:1px solid var(--line);padding:12px;display:none;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;font-size:.85rem}
+  .consent button{padding:8px 14px;border-radius:8px;border:0;background:var(--accent);color:#fff;cursor:pointer}
+  .consent button.alt{background:var(--line)}
+</style>
+</head>
+<body>
+
+<header>
+  <!-- Ta photo : mets un fichier "photo.jpg" à côté de index.html -->
+  <button class="avatar" id="avatarBtn" aria-label="Mes réseaux" style="background-image:url('photo.jpg')"></button>
+  <div class="search"><input id="q" type="search" placeholder="Rechercher…" aria-label="Rechercher"></div>
+  <button class="burger" id="burgerBtn" aria-label="Menu"><i></i><i></i><i></i></button>
+
+  <!-- 3 réseaux : remplace les liens et pseudos -->
+  <div class="pop" id="pop">
+    <a class="social" href="https://www.tiktok.com/@TON_PSEUDO" target="_blank" rel="noopener"><b>TikTok</b><span>@TON_PSEUDO</span></a>
+    <a class="social" href="https://www.instagram.com/TON_PSEUDO" target="_blank" rel="noopener"><b>Instagram</b><span>@TON_PSEUDO</span></a>
+    <a class="social" href="https://www.snapchat.com/add/TON_PSEUDO" target="_blank" rel="noopener"><b>Snapchat</b><span>TON_PSEUDO</span></a>
+  </div>
+</header>
+
+<div class="veil" id="veil"></div>
+<nav class="menu" id="menu">
+  <h3>Informations</h3>
+  <button data-open="mentions">Mentions légales</button>
+  <button data-open="confidentialite">Confidentialité et cookies</button>
+  <button data-open="pubs">Publicités</button>
+  <button data-open="contact">Contact / signalement</button>
+</nav>
+
+<main id="feed">
+  <!-- Bannière pub haut : colle ton code ici -->
+  <div class="slot"><small>Publicité</small><div class="ph">[ Bannière ]</div></div>
+
+  <!-- UNE CARTE = UNE VIDÉO. Copie-colle un bloc, change le titre, la description et le lien Mega. -->
+  <a class="item" href="https://mega.nz/LIEN_1" target="_blank" rel="noopener" data-t="video 1">
+    <div class="thumb">Vignette</div><div class="t"><h2>Vidéo 1</h2><p>Description courte</p></div>
+  </a>
+  <a class="item" href="https://mega.nz/LIEN_2" target="_blank" rel="noopener" data-t="video 2">
+    <div class="thumb">Vignette</div><div class="t"><h2>Vidéo 2</h2><p>Description courte</p></div>
+  </a>
+
+  <div class="slot"><small>Publicité</small><div class="ph">[ 300x250 ]</div></div>
+
+  <a class="item" href="https://mega.nz/LIEN_3" target="_blank" rel="noopener" data-t="video 3">
+    <div class="thumb">Vignette</div><div class="t"><h2>Vidéo 3</h2><p>Description courte</p></div>
+  </a>
+  <a class="item" href="https://mega.nz/LIEN_4" target="_blank" rel="noopener" data-t="video 4">
+    <div class="thumb">Vignette</div><div class="t"><h2>Vidéo 4</h2><p>Description courte</p></div>
+  </a>
+
+  <div class="slot"><small>Publicité</small><div class="ph">[ 300x250 ]</div></div>
+
+  <div class="empty" id="empty">Aucun résultat.</div>
+</main>
+
+<footer>
+  <a href="#" data-open="mentions">Mentions légales</a> · <a href="#" data-open="confidentialite">Confidentialité</a> · <a href="#" data-open="contact">Contact</a>
+  <p>Ce site contient de la publicité.</p>
+</footer>
+
+<!-- Pop-ups légaux : remplace les [CROCHETS] par tes vraies infos -->
+<dialog id="mentions"><h2>Mentions légales</h2>
+  <p>Éditeur du site : [TON NOM OU PSEUDO], [ADRESSE EMAIL DE CONTACT].</p>
+  <p>Hébergeur : [Cloudflare, Inc., 101 Townsend St, San Francisco, CA 94107, USA].</p>
+  <p>Les liens de ce site mènent vers des services tiers (Mega, réseaux sociaux). L'éditeur n'est pas responsable de leur contenu.</p>
+  <button data-close>Fermer</button></dialog>
+
+<dialog id="confidentialite"><h2>Confidentialité et cookies</h2>
+  <p>Ce site n'a pas de compte et ne collecte pas de données personnelles lui-même.</p>
+  <p>Il affiche des publicités fournies par des réseaux tiers ([NOMS DE TES RÉSEAUX]). Ces réseaux peuvent utiliser des cookies ou des identifiants pour diffuser et mesurer les publicités. Tu peux refuser les cookies non essentiels via la bannière ou dans les réglages de ton navigateur.</p>
+  <button data-close>Fermer</button></dialog>
+
+<dialog id="pubs"><h2>Publicités</h2>
+  <p>Ce site est financé par la publicité. Les annonces sont fournies par des tiers et ne sont pas des recommandations de l'éditeur.</p>
+  <button data-close>Fermer</button></dialog>
+
+<dialog id="contact"><h2>Contact / signalement</h2>
+  <p>Pour une question ou pour demander le retrait d'un contenu : [TON EMAIL].</p>
+  <button data-close>Fermer</button></dialog>
+
+<div class="consent" id="consent">
+  <span>Ce site utilise des cookies publicitaires.</span>
+  <button id="ok">Accepter</button><button class="alt" id="no">Refuser</button>
+</div>
+
+<!-- Scripts pub : à charger UNIQUEMENT si le visiteur accepte (voir loadAds ci-dessous) -->
+<script>
+  const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
+  // photo de profil -> encadrés réseaux
+  $('#avatarBtn').onclick=e=>{e.stopPropagation();$('#pop').classList.toggle('open')};
+  document.addEventListener('click',e=>{if(!e.target.closest('#pop'))$('#pop').classList.remove('open')});
+  // menu 3 traits
+  const menu=$('#menu'),veil=$('#veil');
+  const toggle=o=>{menu.classList.toggle('open',o);veil.classList.toggle('open',o)};
+  $('#burgerBtn').onclick=()=>toggle(true); veil.onclick=()=>toggle(false);
+  // pop-ups légaux
+  $$('[data-open]').forEach(b=>b.onclick=e=>{e.preventDefault();toggle(false);document.getElementById(b.dataset.open).showModal()});
+  $$('[data-close]').forEach(b=>b.onclick=()=>b.closest('dialog').close());
+  // recherche
+  $('#q').oninput=e=>{const v=e.target.value.toLowerCase().trim();let n=0;
+    $$('.item').forEach(i=>{const m=!v||i.dataset.t.includes(v)||i.textContent.toLowerCase().includes(v);i.style.display=m?'':'none';if(m)n++});
+    $('#empty').style.display=n?'none':'block'};
+  // consentement cookies (stocké dans le navigateur)
+  function loadAds(){
+    // Colle ici le chargement de tes scripts pub, par exemple :
+    // const s=document.createElement('script');s.src='//EXEMPLE/popunder.js';document.body.appendChild(s);
+  }
+  let c=null;try{c=localStorage.getItem('consent')}catch(e){}
+  if(c==='yes')loadAds(); else if(c!=='no')$('#consent').style.display='flex';
+  const save=v=>{try{localStorage.setItem('consent',v)}catch(e){};$('#consent').style.display='none';if(v==='yes')loadAds()};
+  $('#ok').onclick=()=>save('yes'); $('#no').onclick=()=>save('no');
+</script>
+</body>
+</html>
